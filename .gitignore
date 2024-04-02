@@ -20,7 +20,7 @@
 
 MONGODB_URI=mongodb://localhost:27017
 
-
+.env
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
