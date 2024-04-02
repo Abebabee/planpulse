@@ -3,6 +3,7 @@ import NavigationBar from '../../components/NavigationBar'
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { ObjectId } from 'bson'
+import { io, Socket } from 'socket.io-client'
 import { IoAdd } from 'react-icons/io5'
 import { GoSidebarCollapse } from 'react-icons/go'
 import AddTaskForm from '../../components/ProjectComponents/AddTaskForm/AddTaskForm'
@@ -26,6 +27,7 @@ const ProjectPage: React.FC = () => {
   const [project, setProject] = useState<Project | null>(null)
   const [showAddTaskForm, setShowAddTaskForm] = useState(false)
   const [showAddCollaborator, setShowAddCollaborator] = useState(false) // State to track AddCollaborator visibility
+  const [socket, setSocket] = useState<Socket | null>(null) // State
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -41,6 +43,48 @@ const ProjectPage: React.FC = () => {
 
     fetchProject()
   }, [projectId])
+
+  useEffect(() => {
+    // Establish WebSocket connection when the component mounts
+    const newSocket = io('http://localhost:3001');
+    setSocket(newSocket);
+
+    // Cleanup function to close the socket connection when component unmounts
+    return () => {
+      newSocket.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    // Listen for taskStatusUpdated event from the server
+    const handleTaskStatusUpdate = (data: { projectId: string, taskId: string, status: string }) => {
+      // Update the task status in the frontend
+      // Find the task in the project state and update its status
+      setProject((prevProject: Project | null) => {
+        if (!prevProject) return null; // Check if project is null
+        // Clone the project to avoid mutating the state directly
+        const updatedProject: Project = { ...prevProject };
+        // Find the task by ID and update its status
+        const updatedTasks = updatedProject.tasks.map(task => {
+          if (task.id.toString() === data.taskId) {
+            return { ...task, status: data.status };
+          }
+          return task;
+        });
+        // Update the tasks array in the project and return the updated project
+        return { ...updatedProject, tasks: updatedTasks };
+      });
+    };
+  
+    // Subscribe to taskStatusUpdated event
+    socket?.on('taskStatusUpdated', handleTaskStatusUpdate);
+  
+    // Cleanup function to unsubscribe from the event when component unmounts
+    return () => {
+      socket?.off('taskStatusUpdated', handleTaskStatusUpdate);
+    };
+  }, [socket, setProject]);
+  
 
   const countTasksByStatus = (status: string) =>
     project?.tasks.filter((task) => task.status === status).length || 0
@@ -60,15 +104,20 @@ const ProjectPage: React.FC = () => {
   }
 
   const handleDrop = async (itemId: string, targetStatus: string) => {
-    console.log('hej i handledrop: ' + targetStatus)
     try {
       const updatedTasks = project.tasks.map((task: Task) => {
-        console.log('status' + targetStatus)
         if (task.id.toString() === itemId) {
           // Update the status of the task directly in the project state
           task.status = targetStatus
           // Optionally, update the task status in the database
-          if (projectId) updateTaskStatus(projectId, itemId, targetStatus)
+          if (projectId) {
+            updateTaskStatus(projectId, itemId, targetStatus)
+            socket?.emit('taskStatusUpdate', {
+              projectId,
+              taskId: itemId,
+              status: targetStatus,
+            })
+          }
         }
         return task
       })
@@ -93,98 +142,109 @@ const ProjectPage: React.FC = () => {
   }
 
   return (
-    <body className='flex flex-col min-h-screen'>
-    <div className="flex ">
-      <div>
-        <NavigationBar />
-      </div>
-      <div className="flex flex-col w-full bg-background text-foreground dark:bg-dark_background dark:text-dark_foreground">
-        <div className="flex flex-row justify-between" style={{ width: '95%' }}>
-          <p className="text-4xl m-3 pl-5">{project?.name}</p>
-          <div>
-            <button
-              data-modal-target="default-modal"
-              data-modal-toggle="default-modal"
-              className=" font-medium rounded-lg text-sm px-5 py-2 text-center mt-5 bg-primary text-primary_foreground dark:text-dark_accent hover:bg-primary/90"
-              type="button"
-              onClick={handleAddCollaboratorClick} // Attach onClick handler for Add Collaborator button
-            >
-              Add collaborators
-            </button>
-          </div>
+    <body className="flex flex-col min-h-screen">
+      <div className="flex ">
+        <div>
+          <NavigationBar />
         </div>
-        <div className="ml-2 separator flex flex-row">
+        <div className="flex flex-col w-full bg-background text-foreground dark:bg-dark_background dark:text-dark_foreground">
           <div
-            className="grid relative grid-cols-3 rounded-lg p-3 shadow-lg pt-12 bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border"
-            style={{ width: showAddTaskForm ? '78%' : '95%' }}
+            className="flex flex-row justify-between"
+            style={{ width: '95%' }}
           >
-            <div className="absolute top-2 px-3 py-0.3 right-2 mt-2 rounded-md ">
+            <p className="text-4xl m-3 pl-5">{project?.name}</p>
+            <div>
               <button
-                className="text-foreground dark:text-dark_foreground hover:text-foreground/60 dark:hover:text-dark_foreground/60 font-medium rounded-lg text-sm px-2 py-1 text-center"
-                onClick={handleIoAddClick}
+                data-modal-target="default-modal"
+                data-modal-toggle="default-modal"
+                className=" font-medium rounded-lg text-sm px-5 py-2 text-center mt-5 bg-primary text-primary_foreground dark:text-dark_accent hover:bg-primary/90"
+                type="button"
+                onClick={handleAddCollaboratorClick} // Attach onClick handler for Add Collaborator button
               >
-                {showAddTaskForm ? (
-                  <GoSidebarCollapse size={20} className="text-primary hover:text-dark_primary_foreground" />
-                ) : (
-                  <IoAdd size={20} className="rounded-lg text-primary hover:text-dark_primary_foreground" />
-                )}
+                Add collaborators
               </button>
             </div>
-            <Column
-              status="To Do"
-              items={project?.tasks || []}
-              handleDrop={(itemId: string) => handleDrop(itemId, 'To Do')}
-            />
-            <Column
-              status="In Progress"
-              items={project?.tasks || []}
-              handleDrop={(itemId: string) => handleDrop(itemId, 'In Progress')}
-            />
-            <Column
-              status="Done"
-              items={project?.tasks || []}
-              handleDrop={(itemId: string) => handleDrop(itemId, 'Done')}
-            />
           </div>
-
-          {showAddTaskForm && (
+          <div className="ml-2 separator flex flex-row">
             <div
-              className="flex flex-col align-center rounded-lg p-5 shadow-lg bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border"
-              style={{ width: '20%' }}
+              className="grid relative grid-cols-3 rounded-lg p-3 shadow-lg pt-12 bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border"
+              style={{ width: showAddTaskForm ? '78%' : '95%' }}
             >
-              <AddTaskForm
-                projectId={projectId}
-                updateProject={updateProject}
+              <div className="absolute top-2 px-3 py-0.3 right-2 mt-2 rounded-md ">
+                <button
+                  className="text-foreground dark:text-dark_foreground hover:text-foreground/60 dark:hover:text-dark_foreground/60 font-medium rounded-lg text-sm px-2 py-1 text-center"
+                  onClick={handleIoAddClick}
+                >
+                  {showAddTaskForm ? (
+                    <GoSidebarCollapse
+                      size={20}
+                      className="text-primary hover:text-dark_primary_foreground"
+                    />
+                  ) : (
+                    <IoAdd
+                      size={20}
+                      className="rounded-lg text-primary hover:text-dark_primary_foreground"
+                    />
+                  )}
+                </button>
+              </div>
+              <Column
+                status="To Do"
+                items={project?.tasks || []}
+                handleDrop={(itemId: string) => handleDrop(itemId, 'To Do')}
+              />
+              <Column
+                status="In Progress"
+                items={project?.tasks || []}
+                handleDrop={(itemId: string) =>
+                  handleDrop(itemId, 'In Progress')
+                }
+              />
+              <Column
+                status="Done"
+                items={project?.tasks || []}
+                handleDrop={(itemId: string) => handleDrop(itemId, 'Done')}
               />
             </div>
-          )}
 
-          {showAddCollaborator && ( // Conditionally render AddCollaborator
-            <div
-              className="flex flex-col align-center rounded-lg p-5 bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border shadow"
-              style={{ width: '20%' }}
-            >
-              <AddCollaborator projectId={projectId} />
-            </div>
-          )}
-        </div>
-        <div className="flex flex-row mb-2">
-          <ProjectDescription
-            project={project}
-            projectId={project._id}
-            projectDescription={project.description}
-            projectTitle={project.name}
-          />
-          <CircularCompletion
-            finishedTasks={countTasksByStatus('Done')}
-            unfinishedTasks={
-              countTasksByStatus('To Do') + countTasksByStatus('In Progress')
-            }
-          />
+            {showAddTaskForm && (
+              <div
+                className="flex flex-col align-center rounded-lg p-5 shadow-lg bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border"
+                style={{ width: '20%' }}
+              >
+                <AddTaskForm
+                  projectId={projectId}
+                  updateProject={updateProject}
+                />
+              </div>
+            )}
+
+            {showAddCollaborator && ( // Conditionally render AddCollaborator
+              <div
+                className="flex flex-col align-center rounded-lg p-5 bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border shadow"
+                style={{ width: '20%' }}
+              >
+                <AddCollaborator projectId={projectId} />
+              </div>
+            )}
+          </div>
+          <div className="flex flex-row mb-2">
+            <ProjectDescription
+              project={project}
+              projectId={project._id}
+              projectDescription={project.description}
+              projectTitle={project.name}
+            />
+            <CircularCompletion
+              finishedTasks={countTasksByStatus('Done')}
+              unfinishedTasks={
+                countTasksByStatus('To Do') + countTasksByStatus('In Progress')
+              }
+            />
+          </div>
         </div>
       </div>
-    </div>
-    <Footer></Footer>
+      <Footer></Footer>
     </body>
   )
 }

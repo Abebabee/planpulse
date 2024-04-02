@@ -20,11 +20,8 @@ projectRouter.get("/", async (_req: Request, res: Response) => {
         if (!userId) {
             return res.status(400).send("User ID is required");
         }
-        
-        console.log("userId in getall: " + userId);
         const tempId = new ObjectId(userId)
         if (collections.projects !== undefined) {
-            console.log("hej i if!=undefined");
             
             const projects = await collections.projects
                 .find({
@@ -35,11 +32,8 @@ projectRouter.get("/", async (_req: Request, res: Response) => {
                 })
                 .toArray() as unknown as Project[];
 
-            console.log("Projects found:", projects);
-
             res.status(200).send(projects);
         } else {
-            console.log("collections.projects is undefined");
             res.status(404).send("Projects collection not found");
         }
     } catch (error) {
@@ -119,7 +113,6 @@ projectRouter.post("/", async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(error);
-        console.log("ERROR XD")
     }
 });
 
