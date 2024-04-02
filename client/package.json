@@ -1,0 +1,92 @@
+{
+  "name": "plan-pulse",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.15.12",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/jwt-decode": "^3.1.0",
+    "@types/node": "^20.9.0",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "autoprefixer": "^10.4.16",
+    "axios": "^1.6.7",
+    "browserify-fs": "^1.0.0",
+    "browserify-zlib": "^0.2.0",
+    "bson": "^6.5.0",
+    "cors": "^2.8.5",
+    "crypto-browserify": "^3.12.0",
+    "date-fns": "^3.3.1",
+    "framer-motion": "^11.0.8",
+    "fs": "^0.0.1-security",
+    "https-browserify": "^1.0.0",
+    "js-cookie": "^3.0.5",
+    "mongodb": "^6.5.0",
+    "node-polyfill-webpack-plugin": "^3.0.0",
+    "os-browserify": "^0.3.0",
+    "postcss": "^8.4.31",
+    "querystring-es3": "^0.2.1",
+    "rc-progress": "^3.5.1",
+    "react": "^18.2.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.12.0",
+    "react-scripts": "5.0.1",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "tailwindcss": "^3.3.5",
+    "timers-browserify": "^2.0.12",
+    "typescript": "^4.9.5",
+    "uuid": "^9.0.1",
+    "web-vitals": "^2.1.4",
+    "webpack-cli": "^5.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "tailwind:build": "tailwindcss build src/index.css -o src/tailwind.css",
+    "prepare": "husky install"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@react-oauth/google": "^0.12.1",
+    "@types/js-cookie": "^3.0.6",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/uuid": "^9.0.8",
+    "googleapis": "^128.0.0",
+    "husky": "^8.0.3",
+    "jwt-decode": "^4.0.0",
+    "lint-staged": "^15.1.0",
+    "prettier": "3.0.3",
+    "react-calendar": "^4.6.1",
+    "react-router-dom": "^6.20.0"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  }
+}

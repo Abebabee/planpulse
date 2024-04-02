@@ -1,0 +1,9 @@
+build
+coverage
+node_modules
+.DS_Store
+public
+build
+.local
+node_modules/
+package.json
