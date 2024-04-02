@@ -102,11 +102,6 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ item, handleDrop }) => {
           <div className=" text-sm flex flex-row px-2 justify-end text-center">
             <button onClick={() => setShowModal(true)} className='mr-1'>Assign</button>
             <div className="relative items-end">
-              {/*Display profile pictures of assignedUsers
-              If none, only show Assign button
-              If one, show one circle with PP
-              If many, show two circles "layered"
-              */}
               {assignedUserData.slice(0, 2).map((userData, index) => (
                 <img
                   key={index}

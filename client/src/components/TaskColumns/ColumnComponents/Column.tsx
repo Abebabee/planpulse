@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Task } from '../../../api/apiService';
 import { useDrop } from 'react-dnd';
 import DraggableItem from './DraggableItem';
@@ -11,6 +11,7 @@ interface ColumnProps {
 }
 
 const Column: React.FC<ColumnProps> = ({ status, items, handleDrop }) => {
+  console.log("Items in Column:"+items)
   const [{ isOver }, drop] = useDrop({
     accept: 'TASK',
     drop: (item: { id: string; status: string }) => handleDrop(item.id, status),
@@ -32,6 +33,10 @@ const Column: React.FC<ColumnProps> = ({ status, items, handleDrop }) => {
 
   // Function to update task within the column
   
+  useEffect(() => {
+    // This effect will run whenever the items prop changes
+    console.log("Items prop changed. Re-rendering Column component...");
+  }, [items]);
 
   return (
     <div
