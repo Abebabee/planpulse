@@ -1,10 +1,8 @@
 ## PlanPulse
 
 Web app used to plan projects, namely software projects.
-Summary of features: Users can create new projects and add tasks to them. The tasks can then be assigned to different statuses (To Do, In Progress, Done).  
-
-The application is built using TypeScript, React, tailwind, node.js and mongoDB. 
-
+Summary of features: Users can create new projects and add tasks to them. The tasks can then be assigned to different statuses (To Do, In Progress, Done). Users can be added to projects and be assigned to tasks. 
+Built using React, TypeScript, Tailwind, Node.js, MongoDB and Google Cloud Storage.
 ## Project Status
 
 This project is currently in development. 
