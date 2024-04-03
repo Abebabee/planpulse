@@ -6,6 +6,7 @@ import { ObjectId } from 'bson'
 import { io, Socket } from 'socket.io-client'
 import { IoAdd } from 'react-icons/io5'
 import { GoSidebarCollapse } from 'react-icons/go'
+import { CiChat2 } from 'react-icons/ci'
 import AddTaskForm from '../../components/ProjectComponents/AddTaskForm/AddTaskForm'
 import AddCollaborator from '../../components/ProjectComponents/AddCollaborator/AddCollaborator' // Import AddCollaborator component
 import { Project, getProjectById, updateTaskStatus } from '../../api/apiService'
@@ -13,6 +14,7 @@ import ProjectDescription from '../../components/ProjectComponents/ProjectDescri
 import CircularCompletion from '../../components/CompletionCard/CircularCompletion/CircularCompletion'
 import Column from '../../components/TaskColumns/ColumnComponents/Column'
 import Footer from '../../components/Footer/Footer'
+import Chat from '../../components/ProjectComponents/Chat/Chat'
 
 interface Task {
   id: ObjectId
@@ -26,8 +28,9 @@ const ProjectPage: React.FC = () => {
   const { projectId } = useParams()
   const [project, setProject] = useState<Project | null>(null)
   const [showAddTaskForm, setShowAddTaskForm] = useState(false)
-  const [showAddCollaborator, setShowAddCollaborator] = useState(false) // State to track AddCollaborator visibility
-  const [socket, setSocket] = useState<Socket | null>(null) // State
+  const [showAddCollaborator, setShowAddCollaborator] = useState(false)
+  const [showChat, setShowChat] = useState(false)
+  const [socket, setSocket] = useState<Socket | null>(null)
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -45,70 +48,68 @@ const ProjectPage: React.FC = () => {
   }, [projectId])
 
   useEffect(() => {
-    // Establish WebSocket connection when the component mounts
-    const newSocket = io('http://localhost:3001');
-    setSocket(newSocket);
+    const newSocket = io('http://localhost:3001')
+    setSocket(newSocket)
 
-    // Cleanup function to close the socket connection when component unmounts
     return () => {
-      newSocket.close();
-    };
-  }, []);
+      newSocket.close()
+    }
+  }, [])
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket) return
 
     socket.on('newTaskUpdated', (data) => {
-      console.log("Data below!");
-      console.log(data);
+      console.log('Data below!')
+      console.log(data)
       console.log(projectId)
-        if (data.projectId == projectId?.toString()) {
-            // Update project state with the new task
-            console.log("Hej i newTask")
-            setProject((prevProject) => {
-                if (!prevProject) return null;
-                const updatedTasks = [...prevProject.tasks, data.newTask];
-                return { ...prevProject, tasks: updatedTasks };
-            });
-        }
-    });
+      if (data.projectId == projectId?.toString()) {
+        console.log('Hej i newTask')
+        setProject((prevProject) => {
+          if (!prevProject) return null
+          const updatedTasks = [...prevProject.tasks, data.newTask]
+          return { ...prevProject, tasks: updatedTasks }
+        })
+      }
+    })
     return () => {
-        socket.off('newTask');
-    };
-}, [socket, projectId]);
-
-  
+      socket.off('newTask')
+    }
+  }, [socket, projectId])
 
   useEffect(() => {
     // Listen for taskStatusUpdated event from the server
-    const handleTaskStatusUpdate = (data: { projectId: string, taskId: string, status: string }) => {
+    const handleTaskStatusUpdate = (data: {
+      projectId: string
+      taskId: string
+      status: string
+    }) => {
       // Update the task status in the frontend
       // Find the task in the project state and update its status
       setProject((prevProject: Project | null) => {
-        if (!prevProject) return null; // Check if project is null
+        if (!prevProject) return null // Check if project is null
         // Clone the project to avoid mutating the state directly
-        const updatedProject: Project = { ...prevProject };
+        const updatedProject: Project = { ...prevProject }
         // Find the task by ID and update its status
-        const updatedTasks = updatedProject.tasks.map(task => {
+        const updatedTasks = updatedProject.tasks.map((task) => {
           if (task.id.toString() === data.taskId) {
-            return { ...task, status: data.status };
+            return { ...task, status: data.status }
           }
-          return task;
-        });
+          return task
+        })
         // Update the tasks array in the project and return the updated project
-        return { ...updatedProject, tasks: updatedTasks };
-      });
-    };
-  
+        return { ...updatedProject, tasks: updatedTasks }
+      })
+    }
+
     // Subscribe to taskStatusUpdated event
-    socket?.on('taskStatusUpdated', handleTaskStatusUpdate);
-  
+    socket?.on('taskStatusUpdated', handleTaskStatusUpdate)
+
     // Cleanup function to unsubscribe from the event when component unmounts
     return () => {
-      socket?.off('taskStatusUpdated', handleTaskStatusUpdate);
-    };
-  }, [socket, setProject]);
-  
+      socket?.off('taskStatusUpdated', handleTaskStatusUpdate)
+    }
+  }, [socket, setProject])
 
   const countTasksByStatus = (status: string) =>
     project?.tasks.filter((task) => task.status === status).length || 0
@@ -269,7 +270,16 @@ const ProjectPage: React.FC = () => {
           </div>
         </div>
       </div>
+
       <Footer></Footer>
+      <div className='fixed bottom-0 right-0 mr-2 mb-2'>
+        <button className="rounded-full bg-primary hover:bg-primary/70 text-dark_foreground p-2 opacity-90" onClick={()=>{setShowChat(!showChat)}}>
+          <CiChat2 size={30}></CiChat2>
+        </button>
+      </div>
+      {showChat && (
+        <Chat projectId={projectId} projectName={project.name}></Chat>
+      )}
     </body>
   )
 }
