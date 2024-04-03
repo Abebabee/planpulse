@@ -1,15 +1,16 @@
 import React, { useState } from 'react'
 import { createTask } from '../../../api/apiService'
-import { v4 as uuidv4 } from 'uuid'
 //import {ObjectId} from 'mongodb'
 import {ObjectId} from 'bson'
+import { Socket } from 'socket.io-client';
 
 interface AddTaskFormProps {
   projectId?: string
   updateProject: (projectId: string) => Promise<void>;
+  socket: Socket | null
 }
 
-const AddTaskForm: React.FC<AddTaskFormProps> = ({ projectId, updateProject }) => {
+const AddTaskForm: React.FC<AddTaskFormProps> = ({ projectId, updateProject,socket }) => {
   const [taskTitle, setTaskTitle] = useState('')
   const [taskTitleError, setTaskTitleError] = useState('')
 
@@ -69,8 +70,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ projectId, updateProject }) =
 
     if (!taskTitleError && !taskDescriptionError) {
       const taskId = new ObjectId();
-      console.log("task id: "+taskId)
-
+      //console.log("task id: "+taskId)
+      console.log("socket:"+socket)
       if (projectId) {
         try {
           const newTask = {
@@ -84,6 +85,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ projectId, updateProject }) =
           // Create the task
           await createTask(projectId, newTask);
 
+          socket?.emit('newTask',{projectId,newTask})
           // Update the project state by calling the function from the parent component
           await updateProject(projectId);
           

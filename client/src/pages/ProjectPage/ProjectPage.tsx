@@ -56,6 +56,30 @@ const ProjectPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (!socket) return;
+
+    socket.on('newTaskUpdated', (data) => {
+      console.log("Data below!");
+      console.log(data);
+      console.log(projectId)
+        if (data.projectId == projectId?.toString()) {
+            // Update project state with the new task
+            console.log("Hej i newTask")
+            setProject((prevProject) => {
+                if (!prevProject) return null;
+                const updatedTasks = [...prevProject.tasks, data.newTask];
+                return { ...prevProject, tasks: updatedTasks };
+            });
+        }
+    });
+    return () => {
+        socket.off('newTask');
+    };
+}, [socket, projectId]);
+
+  
+
+  useEffect(() => {
     // Listen for taskStatusUpdated event from the server
     const handleTaskStatusUpdate = (data: { projectId: string, taskId: string, status: string }) => {
       // Update the task status in the frontend
@@ -215,6 +239,7 @@ const ProjectPage: React.FC = () => {
                 <AddTaskForm
                   projectId={projectId}
                   updateProject={updateProject}
+                  socket={socket}
                 />
               </div>
             )}
