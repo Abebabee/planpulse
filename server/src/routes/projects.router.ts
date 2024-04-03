@@ -4,6 +4,7 @@ import { ObjectId } from "mongodb";
 import { collections } from "../services/database.service";
 import Project from "../models/project";
 import Task from "models/task";
+import Message from "models/message"
 import NewProject from "models/newproject";
 import { getUserByEmail } from '../services/database.userservice'; 
 // Global Config
@@ -96,7 +97,26 @@ projectRouter.get("/:projectId/tasks/:taskId", async (req: Request, res: Respons
       res.status(500).send("Internal Server Error");
     }
 });
+//GET - All messages from project
+projectRouter.get('/:projectId/messages', async (req: Request, res: Response) => {
+    try {
+      const projectId = req.params.projectId;
 
+      if(collections.projects){
+        const project = await collections.projects.findOne({ _id: new ObjectId(projectId) });
+  
+        if (!project) {
+          return res.status(404).send(`Project with id ${projectId} not found`);
+        }
+        const messages = project.messages || [];
+        res.status(200).json(messages);
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
+  
   
 
 // POST
@@ -115,6 +135,40 @@ projectRouter.post("/", async (req: Request, res: Response) => {
         console.error(error);
     }
 });
+//POST new message to project
+projectRouter.post('/:projectId/messages', async(req: Request, res: Response)=>{
+    try {
+        const projectId = req.params.projectId;
+        const message: Message = req.body;
+    
+        // Find the project by ID
+        if(collections.projects){
+            const project = await collections.projects.findOne({ _id: new ObjectId(projectId) });
+    
+            if (!project) {
+              return res.status(404).send(`Project with id ${projectId} not found`);
+            }
+        
+            // Initialize the messages array if it doesn't exist
+            if (!project.messages) {
+              project.messages = [];
+            }
+        
+            // Add the message to the project's messages array
+            project.messages.push(message);
+        
+            // Update the project in the database
+            await collections.projects.updateOne({ _id: new ObjectId(projectId) }, { $set: { messages: project.messages } });
+        
+            res.status(201).send('Message added successfully');
+        }
+        
+      } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+      }
+})
+
 
 //POST task
 projectRouter.post("/:projectId/tasks", async (req: Request, res: Response) => {

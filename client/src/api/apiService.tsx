@@ -39,6 +39,11 @@ interface LoginUser{
   email:string
   password:string
 }
+interface Message{
+  from: string
+  message: string
+  date:Date
+}
 type ProjectResponse = AxiosResponse<NewProject>;
 type UserResponse = AxiosResponse<NewUser>;
 
@@ -102,6 +107,16 @@ export const getTaskById = async (projectId: string, taskId: string)=>{
   }
 }
 
+//GET - All messages from project
+export const getMessages = async(projectId:string)=>{
+  try {
+    const response = await axios.get(`${API_BASE_URL}/projects/${projectId}/messages`)
+    return response.data
+  } catch (error) {
+    console.error("Error getting message data: "+error)
+  }
+}
+
 
 //New project
 export const createProject = async (projectData: NewProject): Promise<ProjectResponse> => {
@@ -116,7 +131,7 @@ export const createProject = async (projectData: NewProject): Promise<ProjectRes
   }
 };
 
-//loginUser
+//POST - login User
 export const loginUser = async (userData: LoginUser) => {
   try {
     // Send a POST request to the login endpoint with user data
@@ -128,6 +143,15 @@ export const loginUser = async (userData: LoginUser) => {
   } catch (error) {
     // Log and handle errors
     console.error('Error logging in user:', error);
+    throw error;
+  }
+};
+//POST - New message here:
+export const addNewMessage = async (projectId: string, message: Message): Promise<void> => {
+  try {
+    await axios.post<string>(`http://localhost:3001/projects/${projectId}/messages`, message);
+  } catch (error) {
+    console.error('Error adding new message:', error);
     throw error;
   }
 };
