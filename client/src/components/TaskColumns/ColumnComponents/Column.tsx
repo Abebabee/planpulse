@@ -11,7 +11,6 @@ interface ColumnProps {
 }
 
 const Column: React.FC<ColumnProps> = ({ status, items, handleDrop }) => {
-  console.log("Items in Column:"+items)
   const [{ isOver }, drop] = useDrop({
     accept: 'TASK',
     drop: (item: { id: string; status: string }) => handleDrop(item.id, status),

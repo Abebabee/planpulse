@@ -4,13 +4,15 @@ import { addNewMessage, getMessages } from '../../../api/apiService';
 import Cookies from 'js-cookie';
 import { getUserIdFromToken } from '../../../utils/authUtils';
 import ChatBubble from './ChatBubble/ChatBubble';
+import { Socket } from 'socket.io-client';
 
 interface ChatProps {
   projectName?:string;
   projectId?: string;
+  socket: Socket | null;
 }
 
-const Chat: React.FC<ChatProps> = ({ projectId, projectName }) => {
+const Chat: React.FC<ChatProps> = ({ projectId, projectName, socket }) => {
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<any[]>([]);
 
@@ -18,6 +20,21 @@ const Chat: React.FC<ChatProps> = ({ projectId, projectName }) => {
     fetchMessages();
   }, [projectId]); // Fetch messages when projectId changes
 
+  useEffect(()=>{
+    if(!socket){
+      return
+    }
+    
+    socket.on('newMessageUpdated', (data)=>{
+      console.log("Hej i newMessageUpdate")
+      console.log(data);
+      
+      setMessages((prevMessages)=> [...prevMessages, data.newMessage])
+    })
+    return ()=>{
+      socket.off('newMessage')
+    }
+  },[socket])
   const getUserId = () => {
     const token = Cookies.get('token');
     if (token) {
@@ -47,6 +64,9 @@ const Chat: React.FC<ChatProps> = ({ projectId, projectName }) => {
       };
       if (projectId) {
         await addNewMessage(projectId, newMessage);
+        
+        socket?.emit('newMessage',{newMessage})
+
         setMessage('');
         // After sending a new message, fetch updated messages
         fetchMessages();
@@ -58,7 +78,7 @@ const Chat: React.FC<ChatProps> = ({ projectId, projectName }) => {
 
   return (
     <div>
-      <div className="fixed bottom-10 right-10 md:w-2/5 lg:w-1.5/5">
+      <div className="fixed bottom-10 right-10 md:w-2/5 lg:w-1/5">
         <div className="p-3 rounded-lg rounded-br-none bg-secondary text-card_foreground dark:bg-dark_secondary dark:text-dark_foreground border-2 border-border_color dark:border-dark_border">
           <div className="flex flex-row justify-between w-full">
             <div className="">Group chat for: <span className='font-bold'>{projectName}</span></div>
@@ -69,7 +89,7 @@ const Chat: React.FC<ChatProps> = ({ projectId, projectName }) => {
                 <ChatBubble key={index} message={msg}/>
               ))}
             </div>
-            <div className="flex flex-row justify-center">
+            <div className="flex flex-row justify-center w-full">
               <input
                 type="text"
                 value={message}

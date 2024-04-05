@@ -8,6 +8,7 @@ import { createServer } from 'http'; // Import the HTTP module
 import { Server } from 'socket.io'; // Import the Socket.IO server class
 import cors from "cors"
 import Task from 'models/task';
+import Message from 'models/message';
 //const cors = require('cors');
 
 const app = express();
@@ -37,10 +38,13 @@ connectToDatabase()
 
             socket.on('taskStatusUpdate', (data:{projectId: string, taskId:string, status:string})=>{
                 socket.broadcast.emit('taskStatusUpdated', data);
-            })
+            });
             socket.on('newTask', (data:{projectId: string, task: Task})=>{
                 socket.broadcast.emit('newTaskUpdated',data);
-            })
+            });
+            socket.on('newMessage', (data:{message: Message})=>{
+                socket.broadcast.emit('newMessageUpdated',data)
+            });
             socket.on('disconnect', () => {
                 console.log('A client disconnected');
             });

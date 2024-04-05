@@ -278,7 +278,7 @@ const ProjectPage: React.FC = () => {
         </button>
       </div>
       {showChat && (
-        <Chat projectId={projectId} projectName={project.name}></Chat>
+        <Chat projectId={projectId} projectName={project.name} socket={socket}></Chat>
       )}
     </body>
   )

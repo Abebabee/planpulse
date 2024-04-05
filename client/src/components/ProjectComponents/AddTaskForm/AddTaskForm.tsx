@@ -71,7 +71,6 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ projectId, updateProject,sock
     if (!taskTitleError && !taskDescriptionError) {
       const taskId = new ObjectId();
       //console.log("task id: "+taskId)
-      console.log("socket:"+socket)
       if (projectId) {
         try {
           const newTask = {

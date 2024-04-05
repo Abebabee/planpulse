@@ -51,8 +51,8 @@ userRouter.get('/:userId', async (req: Request, res: Response) => {
             const userData = {
                 _id: user._id,
                 email: user.email,
-                // Include other user data fields as needed
-                profilePictureUrl: user.profilePictureUrl // Assuming profilePictureUrl is the field storing the URL
+                fullname: user.fullname,
+                profilePictureUrl: user.profilePictureUrl ,
             };
     
             return res.status(200).json(userData); 
