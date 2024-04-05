@@ -190,10 +190,10 @@ const ProjectPage: React.FC = () => {
               </button>
             </div>
           </div>
-          <div className="ml-2 separator flex flex-row">
+          <div className="ml-2 mr-2 separator flex lg:flex-row flex-col-reverse">
             <div
-              className="grid relative grid-cols-3 rounded-lg p-3 shadow-lg pt-12 bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border"
-              style={{ width: showAddTaskForm ? '78%' : '95%' }}
+              className="grid relative lg:grid-cols-3 gap-4 lg:gap-0 lg:w-4/5 rounded-lg p-3 shadow-lg pt-12 bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border"
+              
             >
               <div className="absolute top-2 px-3 py-0.3 right-2 mt-2 rounded-md ">
                 <button
@@ -213,29 +213,29 @@ const ProjectPage: React.FC = () => {
                   )}
                 </button>
               </div>
-              <Column
-                status="To Do"
-                items={project?.tasks || []}
-                handleDrop={(itemId: string) => handleDrop(itemId, 'To Do')}
-              />
-              <Column
-                status="In Progress"
-                items={project?.tasks || []}
-                handleDrop={(itemId: string) =>
-                  handleDrop(itemId, 'In Progress')
-                }
-              />
-              <Column
-                status="Done"
-                items={project?.tasks || []}
-                handleDrop={(itemId: string) => handleDrop(itemId, 'Done')}
-              />
+                <Column
+                  status="To Do"
+                  items={project?.tasks || []}
+                  handleDrop={(itemId: string) => handleDrop(itemId, 'To Do')}
+                />
+                <Column
+                  status="In Progress"
+                  items={project?.tasks || []}
+                  handleDrop={(itemId: string) =>
+                    handleDrop(itemId, 'In Progress')
+                  }
+                />
+                <Column
+                  status="Done"
+                  items={project?.tasks || []}
+                  handleDrop={(itemId: string) => handleDrop(itemId, 'Done')}
+                />
             </div>
 
             {showAddTaskForm && (
               <div
-                className="flex flex-col align-center rounded-lg p-5 shadow-lg bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border"
-                style={{ width: '20%' }}
+                className="flex flex-col md:w-full lg:w-1/5 align-center rounded-lg p-5 shadow-lg bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border"
+                
               >
                 <AddTaskForm
                   projectId={projectId}
@@ -245,10 +245,9 @@ const ProjectPage: React.FC = () => {
               </div>
             )}
 
-            {showAddCollaborator && ( // Conditionally render AddCollaborator
+            {showAddCollaborator && (
               <div
-                className="flex flex-col align-center rounded-lg p-5 bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border shadow"
-                style={{ width: '20%' }}
+                className="flex flex-col md:w-full lg:w-1/5 align-center rounded-lg p-5 bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border shadow"
               >
                 <AddCollaborator projectId={projectId} />
               </div>
@@ -272,13 +271,22 @@ const ProjectPage: React.FC = () => {
       </div>
 
       <Footer></Footer>
-      <div className='fixed bottom-0 right-0 mr-2 mb-2'>
-        <button className="rounded-full bg-primary hover:bg-primary/70 text-dark_foreground p-2 opacity-90" onClick={()=>{setShowChat(!showChat)}}>
+      <div className="fixed bottom-0 right-0 mr-2 mb-2">
+        <button
+          className="rounded-full bg-primary hover:bg-primary/70 text-dark_foreground p-2 opacity-90"
+          onClick={() => {
+            setShowChat(!showChat)
+          }}
+        >
           <CiChat2 size={30}></CiChat2>
         </button>
       </div>
       {showChat && (
-        <Chat projectId={projectId} projectName={project.name} socket={socket}></Chat>
+        <Chat
+          projectId={projectId}
+          projectName={project.name}
+          socket={socket}
+        ></Chat>
       )}
     </body>
   )
