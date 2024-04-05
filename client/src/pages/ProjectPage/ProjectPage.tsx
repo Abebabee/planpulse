@@ -253,7 +253,7 @@ const ProjectPage: React.FC = () => {
               </div>
             )}
           </div>
-          <div className="flex flex-row mb-2">
+          <div className="flex flex-col lg:flex-row mb-2 w-full">
             <ProjectDescription
               project={project}
               projectId={project._id}

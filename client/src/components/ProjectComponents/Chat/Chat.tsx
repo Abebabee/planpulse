@@ -79,7 +79,7 @@ const Chat: React.FC<ChatProps> = ({ projectId, projectName, socket }) => {
   return (
     <div>
       <div className="fixed bottom-10 right-10 md:w-2/5 lg:w-1/5">
-        <div className="p-3 rounded-lg rounded-br-none bg-secondary text-card_foreground dark:bg-dark_secondary dark:text-dark_foreground border-2 border-border_color dark:border-dark_border">
+        <div className="p-3 rounded-lg rounded-br-none bg-secondary text-card_foreground dark:bg-dark_secondary dark:text-dark_foreground border-2 border-border_color dark:border-dark_card shadow">
           <div className="flex flex-row justify-between w-full">
             <div className="">Group chat for: <span className='font-bold'>{projectName}</span></div>
           </div>
@@ -98,7 +98,6 @@ const Chat: React.FC<ChatProps> = ({ projectId, projectName, socket }) => {
               />
               <button className="flex flex-row items-center rounded-lg p-1 px-2 bg-primary text-primary_foreground hover:bg-primary/90" onClick={handleMessageSend}>
                 <IoSend />
-                <p className="pl-1 font-bold">Send</p>
               </button>
             </div>
           </div>

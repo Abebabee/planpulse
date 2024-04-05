@@ -21,8 +21,8 @@ const CircularCompletion = ({finishedTasks,unfinishedTasks}: CircularCompletionP
     }
 
     return(
-        <div className="mt-5 rounded-lg p-3 flex flex-row items-center justify-center"
-        style={{ width: '35%'}}>
+        <div className="mt-5 rounded-lg p-3 flex flex-col-reverse lg:flex-row items-center w-4/4 justify-center lg:w-1/3 lg:justify-start"
+        >
             <Circle percent={completionPercentage} strokeWidth={6} strokeColor={setStrokeColor()} trailWidth={2} style={{ width: '30%'}}/>
             <div className='text-center pl-5'>
                 <p className='font-semibold'>Getting there! {completionPercentage}% Done!</p>

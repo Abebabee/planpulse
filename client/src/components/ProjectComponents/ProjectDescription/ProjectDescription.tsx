@@ -37,8 +37,8 @@ const ProjectDescription = ({
 
   return (
     <div
-      className="ml-2 mt-5 rounded-lg p-3 bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border shadow"
-      style={{ width: '50%' }}
+      className="ml-2 mt-5 lg:w-2/4 rounded-lg p-3 bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border shadow"
+      
     >
       <h1 className="text-lg mb-2">Project description</h1>
       <div className="flex flex-col">
