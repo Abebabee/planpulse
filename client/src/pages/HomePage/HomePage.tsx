@@ -1,13 +1,35 @@
 import Card from '../../components/Card'
 import NavigationBar from '../../components/NavigationBar'
 import CalendarPicker from '../../components/Calendar/CalendarPicker'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import GoogleUserProvider, {
   GoogleUserContext,
 } from '../../contexts/GoogleUserContext'
 import RecentProjects from '../../components/ProjectComponents/RecentProjects/RecentProjects'
+import Cookies from 'js-cookie'
+import { getUserIdFromToken } from '../../utils/authUtils'
+import { getUserData } from '../../api/apiService'
 
 export default function HomePage() {
+  const [userName, setUserName] = useState("")
+
+  const fetchData = async () => {
+    const token = Cookies.get('token');
+    if (token) {
+      const userId = getUserIdFromToken(token);
+      if (userId) {
+        try {
+          const userData = await getUserData(userId);
+          console.log(userData)
+          // Assuming the response includes the profilePictureUrl field
+          setUserName(userData.fullname);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      }
+    }
+  };
+  fetchData()
   const hourOfDay = new Date().getHours()
   let greetMsg = ''
 
@@ -29,7 +51,7 @@ export default function HomePage() {
       <div className="flex flex-col">
         <div>
           <p className="text-4xl m-3">
-            {greetMsg}, {googleUser.name}
+            {greetMsg}, {userName}
           </p>
         </div>
         <div className='flex flex-row'>

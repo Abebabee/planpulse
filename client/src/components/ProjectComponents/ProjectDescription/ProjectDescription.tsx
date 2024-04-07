@@ -2,6 +2,8 @@ import { Project } from '../../../api/apiService'
 import { MdModeEdit } from 'react-icons/md'
 import { useState } from 'react'
 import { ObjectId } from 'bson'
+import RichEditor from './RichEditor/RichEditor'
+
 
 interface ProjectDescriptionProps {
   project: Project
@@ -44,12 +46,15 @@ const ProjectDescription = ({
       <div className="flex flex-col">
         {isEditing ? (
           <div className="flex flex-col">
+            {/*
             <textarea
               rows={4}
               value={editedDescription}
               onChange={handleChange}
               className='rounded-md p-1 border border-input dark:border-dark_input bg-card dark:bg-dark_card dark:text-dark_foreground focus-visible:outline-none  focus-visible:ring-2 focus-visible:ring-ring'
             />
+            */}
+            <RichEditor></RichEditor>
             <div className='flex justify-end'>
               <button className=" font-medium rounded-lg text-sm px-5 py-2 my-2 text-center bg-primary text-primary_foreground dark:text-dark_accent hover:bg-primary/90" onClick={handleSaveClick}>
                 Save

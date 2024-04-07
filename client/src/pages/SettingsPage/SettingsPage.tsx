@@ -15,6 +15,7 @@ export default function SettingsPage() {
   const [isHovered, setIsHovered] = useState(false)
   const inputFile = useRef<HTMLInputElement | null>(null); 
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
+  const [userName, setUserName] = useState("");
 
   const handleEditClick = () =>{
     if(inputFile.current){
@@ -49,6 +50,7 @@ export default function SettingsPage() {
             console.log(userData)
             // Assuming the response includes the profilePictureUrl field
             setProfilePictureUrl(userData.profilePictureUrl);
+            setUserName(userData.fullname)
           } catch (error) {
             console.error('Error fetching user data:', error);
           }
@@ -104,7 +106,7 @@ export default function SettingsPage() {
             style={{ width: '30%' }}
           >
             <div>
-              <h1 className="mt-3 font-bold text-md">Albin Fernström</h1>
+              <h1 className="mt-3 font-bold text-md">{userName}</h1>
               <ul className="p-2">
                 <li className="flex flex-row py-2">
                   <MdOutlineWorkOutline size={20} className='text-primary'></MdOutlineWorkOutline>
