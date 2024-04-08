@@ -118,7 +118,7 @@ export const getMessages = async(projectId:string)=>{
 }
 
 
-//New project
+//POST - New project
 export const createProject = async (projectData: NewProject): Promise<ProjectResponse> => {
   try {
       // Remove the $oid prefix and directly assign the ObjectId
@@ -130,6 +130,8 @@ export const createProject = async (projectData: NewProject): Promise<ProjectRes
       throw error;
   }
 };
+
+
 
 //POST - login User
 export const loginUser = async (userData: LoginUser) => {
@@ -198,16 +200,24 @@ export const createNewUser = async (userData: NewUser): Promise<UserResponse>=>{
   }
 }
 //Invite collaborators to project
-/*
-We get email addresses and the project ID from AddCollaborators.tsx, we then add the userId with the
-corresponding email address to the invitedUsers array in the project.
-*/
+
 export const inviteCollaborators = async (projectId: string, invitedUsers: string[]): Promise<void> => {
   try {
     await axios.patch(`${API_BASE_URL}/projects/${projectId}/invitedUsers`, { invitedUsers });
   } catch (error) {
     console.error('Error inviting collaborators:', error);
     throw error;
+  }
+};
+
+
+//POST - New Project Description
+export const createNewProjectDescription = async (projectId: string, description: string): Promise<void> =>{
+  try {
+    console.log("hej i createNew!")
+    await axios.patch(`${API_BASE_URL}/projects/${projectId}/description`, { description});
+  } catch (error) {
+    console.error('Error updating description:', error);
   }
 };
 

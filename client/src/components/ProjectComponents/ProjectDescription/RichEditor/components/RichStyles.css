@@ -66,3 +66,29 @@
     font-size: 16px;
     padding: 20px;
   }
+
+  
+.DraftEditor-editorContainer h1 {
+  @apply text-4xl;
+  @apply font-bold;
+}
+.DraftEditor-editorContainer h2 {
+  @apply text-3xl;
+  @apply font-bold;
+}
+.DraftEditor-editorContainer h3 {
+  @apply text-2xl;
+  @apply font-bold;
+}
+.DraftEditor-editorContainer h4 {
+  @apply text-xl;
+  @apply font-semibold;
+}
+.DraftEditor-editorContainer h5 {
+  @apply text-lg;
+  @apply font-semibold;
+}
+.DraftEditor-editorContainer h6 {
+  @apply text-sm;
+  @apply font-semibold;
+}

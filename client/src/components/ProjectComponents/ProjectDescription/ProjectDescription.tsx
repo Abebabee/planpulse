@@ -3,6 +3,8 @@ import { MdModeEdit } from 'react-icons/md'
 import { useState } from 'react'
 import { ObjectId } from 'bson'
 import RichEditor from './RichEditor/RichEditor'
+import { Editor, EditorState, convertFromRaw } from 'draft-js'
+import React from 'react'
 
 
 interface ProjectDescriptionProps {
@@ -21,7 +23,11 @@ const ProjectDescription = ({
   const [editedDescription, setEditedDescription] = useState(projectDescription)
   const [originalDescription, setOriginalDescription] =
     useState(projectDescription)
-
+    
+    const content = convertFromRaw(JSON.parse(projectDescription))
+    const [editorState, setEditorState] = React.useState(() => 
+      EditorState.createWithContent(content)
+    );
   const handleEditClick = () => {
     setOriginalDescription(editedDescription)
     setIsEditing(true)
@@ -46,27 +52,11 @@ const ProjectDescription = ({
       <div className="flex flex-col">
         {isEditing ? (
           <div className="flex flex-col">
-            {/*
-            <textarea
-              rows={4}
-              value={editedDescription}
-              onChange={handleChange}
-              className='rounded-md p-1 border border-input dark:border-dark_input bg-card dark:bg-dark_card dark:text-dark_foreground focus-visible:outline-none  focus-visible:ring-2 focus-visible:ring-ring'
-            />
-            */}
-            <RichEditor></RichEditor>
-            <div className='flex justify-end'>
-              <button className=" font-medium rounded-lg text-sm px-5 py-2 my-2 text-center bg-primary text-primary_foreground dark:text-dark_accent hover:bg-primary/90" onClick={handleSaveClick}>
-                Save
-              </button>
-              <button className="font-medium rounded-lg text-sm px-5 my-2 py-2 ml-2 mr-1 text-center hover:bg-accent dark:hover:bg-dark_accent" onClick={handleCancelClick}>
-                Cancel
-              </button>
-            </div>
+            <RichEditor projectId={projectId} projectDescription={projectDescription} handleCancelClick={handleCancelClick}></RichEditor>
           </div>
         ) : (
           <div className="flex flex-col">
-            <textarea value={project.description} disabled className='rounded-md p-1'></textarea>
+            <Editor editorState={editorState} onChange={()=>""}></Editor>
             <button className="ml-5 mr-2 my-3 text-primary hover:text-dark_primary_foreground flex justify-end " onClick={handleEditClick}>
               <MdModeEdit size={20} />
             </button>

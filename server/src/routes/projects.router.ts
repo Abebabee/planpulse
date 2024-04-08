@@ -119,7 +119,7 @@ projectRouter.get('/:projectId/messages', async (req: Request, res: Response) =>
   
   
 
-// POST
+// POST - New Project
 
 projectRouter.post("/", async (req: Request, res: Response) => {
     try {
@@ -197,6 +197,37 @@ projectRouter.post("/:projectId/tasks", async (req: Request, res: Response) => {
         res.status(500).send("Internal Server Error");
     }
 });
+//PUT -New project description:
+// Import necessary dependencies and models
+
+// PATCH - Update project description
+projectRouter.patch("/:projectId/description", async (req: Request, res: Response) => {
+    const projectId = req.params.projectId;
+    const { description } = req.body;
+
+    try {
+        // Find the project by ID and update its description
+        const query = { _id: new ObjectId(projectId) };
+        const update = { $set: { description } };
+
+        if (collections.projects) {
+            const result = await collections.projects.updateOne(query, update);
+
+            if (result.modifiedCount === 1) {
+                res.status(200).send({ message: "Project description updated successfully" });
+            } else {
+                res.status(404).send(`Project with id ${projectId} not found`);
+            }
+        }
+    } catch (error) {
+        console.error("Error updating project description:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+  
+  
+
 // PATCH
 projectRouter.patch("/:projectId/tasks/:taskId", async (req: Request, res: Response) => {
     const projectId = req.params.projectId;
