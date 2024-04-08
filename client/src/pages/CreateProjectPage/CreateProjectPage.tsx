@@ -5,6 +5,9 @@ import {ObjectId} from 'bson'
 import Cookies from 'js-cookie';
 import { getUserIdFromToken } from '../../utils/authUtils';
 import { MdDone, MdOutlineErrorOutline } from "react-icons/md";
+import RichEditor from '../../components/ProjectComponents/ProjectDescription/RichEditor/RichEditor';
+import { BlockStyleControls, InlineStyleControls } from '../../components/ProjectComponents/ProjectDescription/RichEditor/components/RichComponents';
+import { Editor, EditorState, RichUtils, convertToRaw } from 'draft-js';
 interface NewProject {
   _id: ObjectId;
   name: string;
@@ -22,6 +25,7 @@ const CreateProjectPage = () => {
   const [projectDescriptionError, setProjectDescriptionError] = useState('')
   const [showAlert, setShowAlert] = useState(false)
   const [alertMessage, setAlertMessage] = useState("")
+  const [editorState, setEditorState] = React.useState(() => EditorState.createEmpty())
 
 
   const getUserId = ()=>{
@@ -34,6 +38,13 @@ const CreateProjectPage = () => {
       }
       return ""
   }
+  const toggleBlockType = (blockType: string) => {
+    setEditorState(RichUtils.toggleBlockType(editorState, blockType));
+  };
+
+  const toggleInlineStyle = (inlineStyle: string) => {
+    setEditorState(RichUtils.toggleInlineStyle(editorState, inlineStyle));
+  };
 
   //Validate user input
   const validateTitle = () => {
@@ -78,12 +89,12 @@ const CreateProjectPage = () => {
       )
       //Gör något här, skicka till databas och printa sedan ut den i vänstra spalten!
       const tempId = new ObjectId()
-
+      const rawDescription = JSON.stringify(convertToRaw(editorState.getCurrentContent()));
 
       const newProject: NewProject = {
         _id: tempId, // Convert ObjectId to string and wrap in an object
         name: projectTitle,
-        description: projectDescription,
+        description: rawDescription,
         ownerId: getUserId(),
         invitedUsers: [],
         tasks: []
@@ -108,7 +119,7 @@ const CreateProjectPage = () => {
     }
   }
   return (
-    <div className="flex flex-row bg-light_bg text-light_primary_text dark:bg-dark_bg dark:text-dark_primary_text">
+    <div className="flex flex-row bg-background text-foreground dark:bg-dark_background dark:text-dark_foreground">
       <div className="flex">
         <NavigationBar />
       </div>
@@ -136,12 +147,7 @@ const CreateProjectPage = () => {
         )}
         </div>
         <div className="mb-5">
-          <label
-            htmlFor="description"
-            className="block mb-2 text-sm font-medium "
-          >
-            Project description
-          </label>
+          {/*
           <textarea
             id="description"
             rows={4}
@@ -150,6 +156,31 @@ const CreateProjectPage = () => {
             value={projectDescription}
             onChange={handleProjectDescriptionChange}
           ></textarea>
+          */}
+          <label
+            htmlFor="description"
+            className="block mb-2 text-sm font-medium "
+          >
+            Project description
+          </label>
+          <div className="editor__container">
+        <div className="toolbar">
+          <BlockStyleControls
+            editorState={editorState}
+            onToggle={toggleBlockType}
+          />
+          <InlineStyleControls
+            editorState={editorState}
+            onToggle={toggleInlineStyle}
+          />
+        </div>
+        <div className="editor">
+          <Editor
+            editorState={editorState}
+            onChange={setEditorState}
+          />
+        </div>
+        </div>
         </div>
 
         <div className="w-full flex justify-center">

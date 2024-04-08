@@ -53,6 +53,7 @@ const ProjectDescription = ({
         {isEditing ? (
           <div className="flex flex-col">
             <RichEditor projectId={projectId} projectDescription={projectDescription} handleCancelClick={handleCancelClick}></RichEditor>
+            {/*Buttons here instead */}
           </div>
         ) : (
           <div className="flex flex-col">

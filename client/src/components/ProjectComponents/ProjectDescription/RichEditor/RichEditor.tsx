@@ -9,7 +9,7 @@ interface RichEditorProps{
   projectId?: string
   projectDescription: string
   projectTitle?: string
-  handleCancelClick: ()=>void
+  handleCancelClick?: ()=>void
 }
 
 const RichEditor = ({
@@ -20,9 +20,9 @@ const RichEditor = ({
   handleCancelClick
 }: RichEditorProps) => {
 
-  const content = convertFromRaw(JSON.parse(projectDescription))
+  const content = projectDescription ? convertFromRaw(JSON.parse(projectDescription)) : undefined;
   const [editorState, setEditorState] = React.useState(() => 
-    EditorState.createWithContent(content)
+    content ? EditorState.createWithContent(content) : EditorState.createEmpty()
   );
 
   const toggleBlockType = (blockType: string) => {
