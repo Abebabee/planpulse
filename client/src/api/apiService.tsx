@@ -12,6 +12,7 @@ export interface Task {
     status: string;
     prio: string;
     assignedUsers?: string[]
+    tag?: string
 }
   
 export interface Project {

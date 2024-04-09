@@ -13,6 +13,12 @@ module.exports = {
       progress_mid: '#e6e22e',
       progress_high: '#8fb935',
 
+      tag_bug: '#FF0000',
+      tag_feat: '#00FF00',
+      tag_ui: '#ADD8E6',
+      tag_test: '#FFFF00',
+      tag_other: '#C0C0C0',
+
       /*Best colors here! :D */
       //test: hsl(210,20%,98%)
       background:'#ffffff',

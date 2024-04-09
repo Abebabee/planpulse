@@ -17,8 +17,10 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ projectId, updateProject,sock
   const [taskDescription, setTaskDescription] = useState('')
   const [taskDescriptionError, settaskDescriptionError] = useState('')
 
+  const [taskTag, setTaskTag] = useState('Feature')
   const [taskPriority, setTaskPriority] = useState('highest')
   const [taskStatus, setTaskStatus] = useState('To Do')
+
 
   const validateTitle = () => {
     if (taskTitle.trim() === '') {
@@ -54,14 +56,13 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ projectId, updateProject,sock
     setTaskPriority(e.target.value)
   }
 
+  const handleTaskTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setTaskTag(e.target.value)
+  }
+
   const handleTaskStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setTaskStatus(e.target.value)
   }
-  const generateUniqueId = () => {
-    const timestamp = (new Date().getTime() / 1000 | 0).toString(16);
-    const uniqueId = timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, () => (Math.random() * 16 | 0).toString(16)).toLowerCase();
-    return uniqueId;
-};
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -78,7 +79,8 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ projectId, updateProject,sock
             description: taskDescription,
             status: taskStatus,
             prio: taskPriority,
-            id: taskId
+            id: taskId,
+            tag: taskTag
           };
 
           // Create the task
@@ -91,6 +93,7 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ projectId, updateProject,sock
           // Clear the form fields
           setTaskTitle('');
           setTaskDescription('');
+          setTaskTag('Feature')
           setTaskPriority('highest');
           setTaskStatus('To Do');
         } catch (error) {
@@ -132,6 +135,24 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({ projectId, updateProject,sock
           value={taskDescription}
           onChange={handleTaskDescriptionChange}
         ></textarea>
+      </div>
+      <div className="mb-5">
+        <label htmlFor="label" className="block mb-2">
+          Tag/Label
+        </label>
+        <select
+          name=""
+          id="label"
+          className="text-sm rounded-lg w-full p-2.5 border border-input dark:border-dark_input bg-card dark:bg-dark_card dark:text-dark_foreground focus-visible:outline-none  focus-visible:ring-2 focus-visible:ring-ring"
+          value={taskTag}
+          onChange={handleTaskTagChange}
+        >
+          <option value="Feature">Feature</option>
+          <option value="Bug">Bug</option>
+          <option value="UI">UI</option>
+          <option value="Test">Test</option>
+          <option value="Other">Other</option>
+        </select>
       </div>
       <div className="mb-5">
         <label htmlFor="priority" className="block mb-2">

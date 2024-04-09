@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import { Task, getUserData } from '../../../api/apiService'
 import { useDrag } from 'react-dnd'
 import AssignModal from './AssignModal'
+import TaskTag from './TaskTag'
 
 interface DraggableItemProps {
   item: Task
@@ -89,7 +90,13 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ item, handleDrop }) => {
       <div
         className={`border-b-2 py-3 px-2 flex justify-between  ${borderColor}`}
       >
-        <p>{item.title}</p>
+        <div className='flex flex-row'>
+        {item.tag && (
+          <TaskTag tagName={item.tag}/>
+        )}
+        <p className='pl-1'>{item.title}</p>
+        </div>
+        
         <span className="cursor-grab text-foreground dark:text-dark_foreground hover:text-foreground/60 dark:hover:text-dark_foreground/60">
           <MdOutlineDragIndicator size={20} />
         </span>
