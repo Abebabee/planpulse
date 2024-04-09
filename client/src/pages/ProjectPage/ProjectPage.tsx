@@ -5,6 +5,10 @@ import { useParams } from 'react-router-dom'
 import { ObjectId } from 'bson'
 import { io, Socket } from 'socket.io-client'
 import { IoAdd } from 'react-icons/io5'
+import {
+  MdExpandLess,
+  MdExpandMore
+} from 'react-icons/md'
 import { GoSidebarCollapse } from 'react-icons/go'
 import { CiChat2 } from 'react-icons/ci'
 import AddTaskForm from '../../components/ProjectComponents/AddTaskForm/AddTaskForm'
@@ -15,6 +19,7 @@ import CircularCompletion from '../../components/CompletionCard/CircularCompleti
 import Column from '../../components/TaskColumns/ColumnComponents/Column'
 import Footer from '../../components/Footer/Footer'
 import Chat from '../../components/ProjectComponents/Chat/Chat'
+import FilterDropdown from '../../components/ProjectComponents/FilterTasks/FilterDropdown'
 
 interface Task {
   id: ObjectId
@@ -31,7 +36,13 @@ const ProjectPage: React.FC = () => {
   const [showAddCollaborator, setShowAddCollaborator] = useState(false)
   const [showChat, setShowChat] = useState(false)
   const [socket, setSocket] = useState<Socket | null>(null)
-
+  const tags = [
+    "Feature", "Bug", "UI", "Test", "Other"
+  ]
+  const tagsWithOptions = tags.map(tag => ({
+    label: tag,
+    value: tag
+}));
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -195,6 +206,9 @@ const ProjectPage: React.FC = () => {
               className="grid relative lg:grid-cols-3 gap-4 lg:gap-0 lg:w-4/5 rounded-lg p-3 shadow-lg pt-12 bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border"
               
             >
+              <div className='absolute top-1 px-3 left-2 rounded-md '>
+                <FilterDropdown options={tagsWithOptions}/>
+              </div>
               <div className="absolute top-2 px-3 py-0.3 right-2 mt-2 rounded-md ">
                 <button
                   className="text-foreground dark:text-dark_foreground hover:text-foreground/60 dark:hover:text-dark_foreground/60 font-medium rounded-lg text-sm px-2 py-1 text-center"
