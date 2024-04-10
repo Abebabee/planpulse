@@ -2,20 +2,16 @@ import LoginButton from '../../components/LoginForm/LoginButton'
 import InputField from '../../components/LoginForm/InputField'
 //import RememberCheckBox from '../../components/LoginForm/RememberCheckBox'
 import { CiMail } from 'react-icons/ci'
-import { FaRegEyeSlash, FaGoogle, FaFacebook, FaTwitter } from 'react-icons/fa'
-import LoginIcon from '../../components/LoginForm/LoginIcon'
+import { FaRegEyeSlash} from 'react-icons/fa'
 import PasswordField from '../../components/LoginForm/PasswordField'
 import {
-  useEffect,
   useContext,
-  createContext,
-  ReactNode,
   useState,
 } from 'react'
 import { GoogleLogin } from '@react-oauth/google'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
-import GoogleUserProvider, {
+import {
   GoogleUserContext,
 } from '../../contexts/GoogleUserContext'
 import { loginUser } from '../../api/apiService'
@@ -130,7 +126,6 @@ export default function LoginPage() {
           <GoogleLogin
             onSuccess={(credentialResponse) => {
               if (credentialResponse.credential !== undefined) {
-                //const details = jwtDecode(credentialResponse.credential)
                 const details: dataCredential = jwtDecode(
                   credentialResponse.credential,
                 )
@@ -140,10 +135,7 @@ export default function LoginPage() {
                   email: details.email,
                   avatar_url: details.picture,
                 })
-                // Get the previous location from state or fallback to '/'
                 const previousLocation = location.state?.from || '/'
-
-                // Redirect to the previous location
                 navigate(previousLocation)
               }
               console.log(credentialResponse)

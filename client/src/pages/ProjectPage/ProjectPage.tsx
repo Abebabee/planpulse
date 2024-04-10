@@ -1,14 +1,9 @@
-import { Link } from 'react-router-dom'
 import NavigationBar from '../../components/NavigationBar'
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { ObjectId } from 'bson'
 import { io, Socket } from 'socket.io-client'
 import { IoAdd } from 'react-icons/io5'
-import {
-  MdExpandLess,
-  MdExpandMore
-} from 'react-icons/md'
 import { GoSidebarCollapse } from 'react-icons/go'
 import { CiChat2 } from 'react-icons/ci'
 import AddTaskForm from '../../components/ProjectComponents/AddTaskForm/AddTaskForm'
@@ -71,10 +66,7 @@ const ProjectPage: React.FC = () => {
     if (!socket) return
 
     socket.on('newTaskUpdated', (data) => {
-      console.log('Data below!')
-      console.log(data)
-      console.log(projectId)
-      if (data.projectId == projectId?.toString()) {
+      if (data.projectId === projectId?.toString()) {
         console.log('Hej i newTask')
         setProject((prevProject) => {
           if (!prevProject) return null
@@ -159,9 +151,6 @@ const ProjectPage: React.FC = () => {
       })
       // Update the project state with the modified tasks
       setProject({ ...project, tasks: updatedTasks })
-      const doneCount = countTasksByStatus('Done')
-      const unfinishedCount =
-        countTasksByStatus('To Do') + countTasksByStatus('In Progress')
       //setTaskCounts({ done: doneCount, unfinished: unfinishedCount })
     } catch (error) {
       console.error('Error updating task status:', error)

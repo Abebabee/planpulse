@@ -13,7 +13,7 @@ const tagColors: {[key: string]: string} = {
 const TaskTag: React.FC<TaskTagProps> = ({tagName}) => {
     const color = tagColors[tagName]
     return(
-        <div className={`rounded-md p-0.5 text-xs dark:text-foreground ${color}`}>
+        <div className={`rounded-md p-0.5 pt-1 px-1 text-xs dark:text-foreground ${color}`}>
             <p className="align-middle">{tagName}</p>
         </div>
     )

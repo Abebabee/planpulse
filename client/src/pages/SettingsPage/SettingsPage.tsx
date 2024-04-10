@@ -1,4 +1,3 @@
-import EditProfile from '../../components/EditProfile/EditProfile'
 import NavigationBar from '../../components/NavigationBar'
 import { useEffect, useRef, useState } from 'react'
 import { MdOutlineWorkOutline, MdModeEdit } from 'react-icons/md'

@@ -40,7 +40,7 @@ const Column: React.FC<ColumnProps> = ({ status, items, handleDrop }) => {
   return (
     <div
       ref={drop}
-      className={`border border-border_color dark:dark_border mt-1 ${
+      className={`border border-border_color dark:border-dark_border mt-1 ${
         isOver ? 'border-black' : 'border-transparent'
       } rounded p-3`}
     >

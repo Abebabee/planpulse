@@ -9,7 +9,7 @@ import { AxiosError } from 'axios'
 import { useNavigate } from 'react-router-dom'
 
 interface NewUser {
-  fullname:string
+  fullname: string
   email: string
   password: string
 }
@@ -22,9 +22,7 @@ export default function SignUpPage() {
   const [userEmail, setUserEmail] = useState('')
   const [userPassword, setUserPassword] = useState('')
   const [userConfirmPassword, setUserConfirmPassword] = useState('')
-  //const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState<string>('')
-  const [status, setStatus] = useState(1)
   const handleClick = () => {
     console.log(userEmail, userPassword)
   }
@@ -50,8 +48,7 @@ export default function SignUpPage() {
       }
       try {
         const response = await createNewUser(newUser)
-        //go to "/homepage"
-        if (response.status == 201) {
+        if (response.status === 201) {
           navigate('/')
         }
       } catch (error) {
