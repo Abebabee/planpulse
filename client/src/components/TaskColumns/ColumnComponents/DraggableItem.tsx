@@ -3,8 +3,6 @@ import {
   MdExpandMore,
   MdOutlineDragIndicator,
 } from 'react-icons/md'
-import { IoAdd } from 'react-icons/io5'
-import { GoSidebarCollapse } from 'react-icons/go'
 import { IoTrashOutline } from 'react-icons/io5'
 import { useEffect, useState } from 'react'
 import { Task, getUserData } from '../../../api/apiService'
@@ -32,16 +30,12 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ item, handleDrop, socket 
       }
   }
   useEffect(() => {
-    // Listen for 'taskAssigned' event from the server
     if (socket) {
       socket.on('taskAssigned', (updatedTask: Task) => {
         if (updatedTask.id === item.id) {
-          // Update the task if it matches the updated task
           updateTask(updatedTask);
         }
       });
-
-      // Clean up the event listener when component unmounts
       return () => {
         socket.off('taskAssigned');
       };
@@ -50,30 +44,21 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ item, handleDrop, socket 
   
   const updateTask = async (updatedTask: Task) => {
     setTask(updatedTask)
-    console.log(updatedTask.assignedUsers)
     
     if (updatedTask.assignedUsers) {
-      console.log("Hej i updateTask")
       const userDataPromises = updatedTask.assignedUsers.map(
         async (userId: string) => {
           const userData = await getUserData(userId)
-          console.log(userData)
           return userData
         },
       )
 
       const userDataArray = await Promise.all(userDataPromises)
       setAssignedUserData(userDataArray)
-
-      // Logging profile picture URLs
-      userDataArray.forEach((userData) => {
-        console.log(userData.profilePictureUrl)
-      })
     }
   }
 
   const toggleShowMore = () => {
-    console.log(item)
     setShowMore(!showMore)
   }
   const [showModal, setShowModal] = useState(false)
