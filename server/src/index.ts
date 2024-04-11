@@ -45,6 +45,11 @@ connectToDatabase()
             socket.on('newMessage', (data:{message: Message})=>{
                 socket.broadcast.emit('newMessageUpdated',data)
             });
+            
+            socket.on('assignTask', (data:{updatedTask: Task})=>{
+                socket.broadcast.emit('taskAssigned', data)
+            })
+            
             socket.on('disconnect', () => {
                 console.log('A client disconnected');
             });

@@ -220,6 +220,7 @@ const ProjectPage: React.FC = () => {
                   status="To Do"
                   items={project?.tasks || []}
                   handleDrop={(itemId: string) => handleDrop(itemId, 'To Do')}
+                  socket={socket}
                 />
                 <Column
                   status="In Progress"
@@ -227,11 +228,13 @@ const ProjectPage: React.FC = () => {
                   handleDrop={(itemId: string) =>
                     handleDrop(itemId, 'In Progress')
                   }
+                  socket={socket}
                 />
                 <Column
                   status="Done"
                   items={project?.tasks || []}
                   handleDrop={(itemId: string) => handleDrop(itemId, 'Done')}
+                  socket={socket}
                 />
             </div>
 

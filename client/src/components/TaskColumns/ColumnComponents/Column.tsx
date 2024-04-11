@@ -3,14 +3,16 @@ import { Task } from '../../../api/apiService';
 import { useDrop } from 'react-dnd';
 import DraggableItem from './DraggableItem';
 import AssignModal from './AssignModal'; // Import AssignModal component
+import { Socket } from 'socket.io-client';
 
 interface ColumnProps {
   status: string;
   items: Task[];
   handleDrop: (itemId: string, targetStatus: string) => void;
+  socket: Socket | null
 }
 
-const Column: React.FC<ColumnProps> = ({ status, items, handleDrop }) => {
+const Column: React.FC<ColumnProps> = ({ status, items, handleDrop, socket }) => {
   const [{ isOver }, drop] = useDrop({
     accept: 'TASK',
     drop: (item: { id: string; status: string }) => handleDrop(item.id, status),
@@ -49,7 +51,8 @@ const Column: React.FC<ColumnProps> = ({ status, items, handleDrop }) => {
         <div key={item.id.toString()}>
           <DraggableItem
             item={item}
-            handleDrop={handleDrop} // Pass the updateTask function to DraggableItem
+            handleDrop={handleDrop}
+            socket={socket}
           />
         </div>
       ))}

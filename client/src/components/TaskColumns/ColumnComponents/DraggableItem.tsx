@@ -11,23 +11,49 @@ import { Task, getUserData } from '../../../api/apiService'
 import { useDrag } from 'react-dnd'
 import AssignModal from './AssignModal'
 import TaskTag from './TaskTag'
+import { Socket } from 'socket.io-client'
 
 interface DraggableItemProps {
   item: Task
   handleDrop: (itemId: string, targetStatus: string) => void
+  socket: Socket | null
 }
 
-const DraggableItem: React.FC<DraggableItemProps> = ({ item, handleDrop }) => {
+const DraggableItem: React.FC<DraggableItemProps> = ({ item, handleDrop, socket }) => {
   const [showMore, setShowMore] = useState(false)
   const [task, setTask] = useState<Task>(item)
   const [assignedUserData, setAssignedUserData] = useState<any[]>([])
 
+  const updateAssigned = async (updatedTask: Task) => {
+      if(updatedTask.assignedUsers){
+        if(socket){
+          socket.emit('assignTask',updatedTask)
+        }
+      }
+  }
+  useEffect(() => {
+    // Listen for 'taskAssigned' event from the server
+    if (socket) {
+      socket.on('taskAssigned', (updatedTask: Task) => {
+        if (updatedTask.id === item.id) {
+          // Update the task if it matches the updated task
+          updateTask(updatedTask);
+        }
+      });
+
+      // Clean up the event listener when component unmounts
+      return () => {
+        socket.off('taskAssigned');
+      };
+    }
+  }, [socket, item]);
+  
   const updateTask = async (updatedTask: Task) => {
     setTask(updatedTask)
     console.log(updatedTask.assignedUsers)
-
-    // getUserData() on each assigned user (updatedTask.assignedUsers)
+    
     if (updatedTask.assignedUsers) {
+      console.log("Hej i updateTask")
       const userDataPromises = updatedTask.assignedUsers.map(
         async (userId: string) => {
           const userData = await getUserData(userId)
@@ -90,13 +116,11 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ item, handleDrop }) => {
       <div
         className={`border-b-2 py-3 px-2 flex justify-between  ${borderColor}`}
       >
-        <div className='flex flex-row'>
-        {item.tag && (
-          <TaskTag tagName={item.tag}/>
-        )}
-        <p className='pl-1'>{item.title}</p>
+        <div className="flex flex-row">
+          {item.tag && <TaskTag tagName={item.tag} />}
+          <p className="pl-1">{item.title}</p>
         </div>
-        
+
         <span className="cursor-grab text-foreground dark:text-dark_foreground hover:text-foreground/60 dark:hover:text-dark_foreground/60">
           <MdOutlineDragIndicator size={20} />
         </span>
@@ -107,7 +131,12 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ item, handleDrop }) => {
       {showMore && (
         <div>
           <div className=" text-sm flex flex-row px-2 justify-end text-center">
-            <button onClick={() => setShowModal(true)} className='mr-1'>Assign</button>
+            <button
+              onClick={() => setShowModal(true)}
+              className="mr-1 p-1 rounded-lg bg-primary text-primary_foreground dark:text-dark_accent hover:bg-primary/90"
+            >
+              Assign
+            </button>
             <div className="relative items-end">
               {assignedUserData.slice(0, 2).map((userData, index) => (
                 <img
@@ -123,7 +152,6 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ item, handleDrop }) => {
                       ? 'relative size-30 z-40 overflow-hidden bg-background border-solid border-2 border-primary rounded-full mr-2 bottom-0 right-0'
                       : 'absolute size-30 z-20 bg-background border-solid border-2 border-dark_primary_foreground brightness-75 dark:brightness-60 rounded-full bottom-0 right-0'
                   }`}
-                  
                 />
               ))}
             </div>
@@ -148,6 +176,7 @@ const DraggableItem: React.FC<DraggableItemProps> = ({ item, handleDrop }) => {
         setShowModal={setShowModal}
         task={item}
         updateTask={updateTask}
+        updateAssigned={updateAssigned}
       />
     </div>
   )

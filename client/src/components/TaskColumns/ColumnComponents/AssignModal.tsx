@@ -15,6 +15,7 @@ interface ModalProps {
   setShowModal: (showModal: boolean) => void
   task: Task
   updateTask: (updatedTask: Task) => void
+  updateAssigned: (updatedTask: Task) => void
 }
 
 const AssignModal: React.FC<ModalProps> = ({
@@ -22,6 +23,7 @@ const AssignModal: React.FC<ModalProps> = ({
   setShowModal,
   task,
   updateTask,
+  updateAssigned
 }) => {
   const { projectId } = useParams()
   const [email, setEmail] = useState('')
@@ -104,6 +106,7 @@ const AssignModal: React.FC<ModalProps> = ({
       }
     }
   }
+  
 
   const handleAdd = async () => {
     if (project && task) {
@@ -115,6 +118,7 @@ const AssignModal: React.FC<ModalProps> = ({
       
       if(updatedTaskData){
         updateTask(updatedTaskData)
+        updateAssigned(updatedTaskData)
       }
       
     }
@@ -179,7 +183,6 @@ const AssignModal: React.FC<ModalProps> = ({
                 </div>
               ))}
             </div>
-            {/* Unassigned Users List */}
             <div>
               <h3>Unassigned Users</h3>
               {unassignedUserList.map((item) => (
@@ -188,7 +191,7 @@ const AssignModal: React.FC<ModalProps> = ({
                   onClick={() => handleUserSelect(item._id)}
                   className={`flex flex-row my-2 p-1 rounded-md ${
                     selectedUsers.includes(item._id)
-                      ? '' // Apply background color if user is selected
+                      ? '' 
                       : ''
                   }`}
                 >

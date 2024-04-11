@@ -48,7 +48,7 @@ interface Message{
 type ProjectResponse = AxiosResponse<NewProject>;
 type UserResponse = AxiosResponse<NewUser>;
 
-const API_BASE_URL = 'http://localhost:3001'; // Update with your backend URL
+const API_BASE_URL = 'http://localhost:3001';
 
 //GET
 export const getAllProjects = async () => {
