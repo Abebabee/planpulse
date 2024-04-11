@@ -109,7 +109,7 @@ export default function SettingsPage() {
               <ul className="p-2">
                 <li className="flex flex-row py-2">
                   <MdOutlineWorkOutline size={20} className='text-primary'></MdOutlineWorkOutline>
-                  <p className="pl-1">Software Developer</p>
+                  <p className="pl-1">Software Developer (soon™)</p>
                 </li>
                 <li className="flex flex-row">
                   <GrLocation size={20} className='text-primary'></GrLocation>

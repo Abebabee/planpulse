@@ -5,11 +5,11 @@
   max-width: 100%;
   color: #222;
   border-radius: 8px;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
   font-family: 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.125em;
+  @apply shadow-lg 
 }
 .react-calendar__navigation {
   display: flex;

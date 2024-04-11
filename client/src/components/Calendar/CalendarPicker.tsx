@@ -18,7 +18,7 @@ const CalendarPicker = () => {
         <Calendar
           onChange={handleDateChange as CalendarProps['onChange']}
           value={selectedDate}
-          className="bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground"
+          className="bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border border-border_color dark:border-dark_border"
         />
       </div>
       <ScheduledTasks selectedDate={selectedDate} />

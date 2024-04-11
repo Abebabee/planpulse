@@ -50,7 +50,7 @@ export default function HomePage() {
       </div>
       <div className="flex flex-col">
         <div>
-          <p className="text-4xl m-3">
+          <p className="text-4xl m-3 pl-5 pt-2">
             {greetMsg}, {userName}
           </p>
         </div>
