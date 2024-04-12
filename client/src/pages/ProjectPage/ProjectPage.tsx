@@ -31,13 +31,21 @@ const ProjectPage: React.FC = () => {
   const [showAddCollaborator, setShowAddCollaborator] = useState(false)
   const [showChat, setShowChat] = useState(false)
   const [socket, setSocket] = useState<Socket | null>(null)
-  const tags = [
-    "Feature", "Bug", "UI", "Test", "Other"
-  ]
-  const tagsWithOptions = tags.map(tag => ({
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  const tags = ['Feature', 'Bug', 'UI', 'Test', 'Other']
+  const tagsWithOptions = tags.map((tag) => ({
     label: tag,
-    value: tag
-}));
+    value: tag,
+  }))
+
+  const handleFilterChange = (
+    selectedTags: { label: string; value: string }[],
+  ) => {
+    const tagValues = selectedTags.map(tag => tag.value);
+    setSelectedTags(tagValues)
+    console.log(selectedTags)
+  }
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -191,12 +199,9 @@ const ProjectPage: React.FC = () => {
             </div>
           </div>
           <div className="ml-2 mr-2 separator flex lg:flex-row flex-col-reverse">
-            <div
-              className="grid relative lg:grid-cols-3 gap-4 lg:gap-0 lg:w-4/5 rounded-lg p-3 shadow-lg pt-12 bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border"
-              
-            >
-              <div className='absolute top-1 px-3 left-2 rounded-md '>
-                <FilterDropdown options={tagsWithOptions}/>
+            <div className="grid relative lg:grid-cols-3 gap-4 lg:gap-0 lg:w-4/5 rounded-lg p-3 shadow-lg pt-12 bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border">
+              <div className="absolute top-1 px-3 left-2 rounded-md ">
+                <FilterDropdown options={tagsWithOptions} onFilterChange={handleFilterChange}/>
               </div>
               <div className="absolute top-2 px-3 py-0.3 right-2 mt-2 rounded-md ">
                 <button
@@ -216,33 +221,33 @@ const ProjectPage: React.FC = () => {
                   )}
                 </button>
               </div>
-                <Column
-                  status="To Do"
-                  items={project?.tasks || []}
-                  handleDrop={(itemId: string) => handleDrop(itemId, 'To Do')}
-                  socket={socket}
-                />
-                <Column
-                  status="In Progress"
-                  items={project?.tasks || []}
-                  handleDrop={(itemId: string) =>
-                    handleDrop(itemId, 'In Progress')
-                  }
-                  socket={socket}
-                />
-                <Column
-                  status="Done"
-                  items={project?.tasks || []}
-                  handleDrop={(itemId: string) => handleDrop(itemId, 'Done')}
-                  socket={socket}
-                />
+              <Column
+                status="To Do"
+                items={project?.tasks || []}
+                handleDrop={(itemId: string) => handleDrop(itemId, 'To Do')}
+                socket={socket}
+                selectedTags={selectedTags}
+              />
+              <Column
+                status="In Progress"
+                items={project?.tasks || []}
+                handleDrop={(itemId: string) =>
+                  handleDrop(itemId, 'In Progress')
+                }
+                socket={socket}
+                selectedTags={selectedTags}
+              />
+              <Column
+                status="Done"
+                items={project?.tasks || []}
+                handleDrop={(itemId: string) => handleDrop(itemId, 'Done')}
+                socket={socket}
+                selectedTags={selectedTags}
+              />
             </div>
 
             {showAddTaskForm && (
-              <div
-                className="flex flex-col md:w-full lg:w-1/5 align-center rounded-lg p-5 shadow-lg bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border"
-                
-              >
+              <div className="flex flex-col md:w-full lg:w-1/5 align-center rounded-lg p-5 shadow-lg bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border">
                 <AddTaskForm
                   projectId={projectId}
                   updateProject={updateProject}
@@ -252,9 +257,7 @@ const ProjectPage: React.FC = () => {
             )}
 
             {showAddCollaborator && (
-              <div
-                className="flex flex-col md:w-full lg:w-1/5 align-center rounded-lg p-5 bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border shadow"
-              >
+              <div className="flex flex-col md:w-full lg:w-1/5 align-center rounded-lg p-5 bg-card text-card_foreground dark:bg-dark_card dark:text-dark_foreground border-2 border-border_color dark:border-dark_border shadow">
                 <AddCollaborator projectId={projectId} />
               </div>
             )}

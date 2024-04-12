@@ -3,11 +3,15 @@ import Select from 'react-select';
 import { MdExpandMore } from 'react-icons/md';
 
 interface FilterDropdownProps {
-    options: { label: string; value: string }[]; // Change type to fit react-select format
+    options: { label: string; value: string }[];
     title?: string;
+    onFilterChange: (selectedTags: {label: string; value: string}[])=>void;
 }
 
-const TaskDropdown: React.FC<FilterDropdownProps> = ({ options, title }) => {
+const TaskDropdown: React.FC<FilterDropdownProps> = ({ options, title, onFilterChange }) => {
+    const handleFilteredOptions = (selectedOptions: any) =>{
+        onFilterChange(selectedOptions)
+    }
     return (
         <div className="relative">
             {title && <label className="block text-sm font-medium text-gray-700">{title}</label>}
@@ -18,6 +22,7 @@ const TaskDropdown: React.FC<FilterDropdownProps> = ({ options, title }) => {
                 className="my-react-select-container"
                 classNamePrefix="my-react-select"
                 components={{ DropdownIndicator }}
+                onChange={handleFilteredOptions}
             />
         </div>
     );
